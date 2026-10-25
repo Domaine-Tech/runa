@@ -1,0 +1,130 @@
+name: Release
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  prepare-version:
+    name: prepare-version
+    runs-on: ubuntu-22.04
+    outputs:
+      version: ${{ steps.prep.outputs.version }}
+      tag: ${{ steps.prep.outputs.tag }}
+      bumped: ${{ steps.prep.outputs.bumped }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.RELEASE_TOKEN != '' && secrets.RELEASE_TOKEN || github.token }}
+
+      - name: Configure git identity
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Prepare SemVer (bump mineur si collision)
+        id: prep
+        env:
+          GH_TOKEN: ${{ secrets.RELEASE_TOKEN != '' && secrets.RELEASE_TOKEN || github.token }}
+        run: python3 scripts/prepare_version.py --apply --write-tag
+
+      - name: Push commit + tag
+        env:
+          TAG: ${{ steps.prep.outputs.tag }}
+        run: |
+          git push origin HEAD
+          git push origin "refs/tags/${TAG}"
+
+  build:
+    name: build (${{ matrix.platform }})
+    needs: prepare-version
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: windows-latest
+            args: --features llama --bundles nsis
+          - platform: ubuntu-22.04
+            args: --features llama --bundles deb,appimage
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.prepare-version.outputs.tag }}
+          fetch-depth: 0
+
+      - name: Install Linux dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            build-essential \
+            cmake \
+            clang \
+            libclang-dev \
+            libwebkit2gtk-4.1-dev \
+            libayatana-appindicator3-dev \
+            librsvg2-dev \
+            patchelf \
+            libssl-dev \
+            libfuse2 \
+            wget \
+            file
+
+      - name: Install LLVM (Windows, bindgen llama)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          choco install llvm -y --no-progress
+          $clang = "C:\Program Files\LLVM\bin"
+          echo "LIBCLANG_PATH=$clang" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+          echo "$clang" | Out-File -FilePath $env:GITHUB_PATH -Append -Encoding utf8
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: swatinem/rust-cache@v2
+        with:
+          shared-key: release-${{ matrix.platform }}
+          key: features-llama
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: apps/desktop/package-lock.json
+
+      - name: Install frontend deps
+        working-directory: apps/desktop
+        run: npm ci
+
+      - name: Build + upload release artefacts
+        uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN != '' && secrets.RELEASE_TOKEN || github.token }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+          LIBCLANG_PATH: ${{ env.LIBCLANG_PATH }}
+        with:
+          projectPath: apps/desktop
+          tagName: ${{ needs.prepare-version.outputs.tag }}
+          releaseName: Runa ${{ needs.prepare-version.outputs.tag }}
+          releaseBody: |
+            Release automatique ${{ needs.prepare-version.outputs.tag }}.
+
+            Installeurs Windows (NSIS) et Linux (`.deb`, AppImage).
+            Le modèle GGUF n’est **pas** inclus — téléchargement explicite dans l’app.
+            Mises à jour signées (minisign) via `latest.json`.
+          releaseDraft: false
+          prerelease: false
+          args: ${{ matrix.args }}
+          updaterJsonPreferNsis: true

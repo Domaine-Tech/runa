@@ -1,0 +1,14 @@
+---
+description: Runa — contexte Rust / crates (renvoie aux docs, sans dupliquer)
+globs: crates/**/*.rs,apps/desktop/src-tauri/**/*.rs,**/Cargo.toml
+alwaysApply: false
+---
+
+# Rust
+
+Appliquer `docs/ai/RULES.md` §2–3 et `docs/CODING_STANDARDS.md`.
+
+- Ports OS : `crates/platform-engine`
+- IA : `crates/ai-engine` (feature `llama` = sprint S4 ; off par défaut, CMake requis)
+- Composition : `apps/desktop/src-tauri` uniquement
+- Vérifier avec `cargo check --workspace`

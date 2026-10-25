@@ -1,0 +1,22 @@
+[package]
+name = "shared-utils"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "Utilitaires centralisés Runa (séquence, diff, hash, logging, config)"
+
+[dependencies]
+shared-types = { workspace = true }
+blake3 = { workspace = true }
+similar = { workspace = true }
+whatlang = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+directories = { workspace = true }
+toml = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+chrono = { workspace = true }
+
+[lints]
+workspace = true

@@ -1,0 +1,18 @@
+---
+description: Runa — règles projet (pointeur vers source unique, toujours actif)
+alwaysApply: true
+---
+
+# Runa — Core
+
+Avant toute action, lire et appliquer **`docs/ai/RULES.md`** (source unique, pas de doublon ici).
+
+Entrée courte : `AGENTS.md`.
+
+Sprints : `docs/product/SPRINTS.md` · Backlog : `docs/product/BACKLOG.md`.
+
+Rappel strict :
+- Types → `crates/shared-types` ; utils → `crates/shared-utils`
+- Pas de `.unwrap()` / `.expect()` hors tests
+- Features hors sprint → entrée backlog, pas d’impl improvisée
+- Répondre en français si l’utilisateur écrit en français

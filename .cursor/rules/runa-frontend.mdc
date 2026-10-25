@@ -1,0 +1,13 @@
+---
+description: Runa — frontend Svelte / TS (renvoie aux docs, sans dupliquer)
+globs: apps/desktop/src/**/*.{ts,svelte,css},apps/desktop/*.{json,js,ts}
+alwaysApply: false
+---
+
+# Frontend
+
+Appliquer `docs/ai/RULES.md` et `docs/CODING_STANDARDS.md` §2 / §8.
+
+- Types IPC depuis `apps/desktop/src/lib/bindings.ts` (specta) — pas d’interfaces dupliquées
+- `strict` / pas de `any`
+- Vérifier avec `npm run check` dans `apps/desktop`

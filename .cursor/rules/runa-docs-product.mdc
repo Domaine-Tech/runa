@@ -1,0 +1,13 @@
+---
+description: Runa — docs produit / sprints / backlog
+globs: docs/product/**/*.md,docs/ai/**/*.md,AGENTS.md,CLAUDE.md
+alwaysApply: false
+---
+
+# Docs produit & règles IA
+
+- Règles agents : **uniquement** `docs/ai/RULES.md` (les autres fichiers sont des pointeurs)
+- Versions : `docs/product/ROADMAP.md`
+- Exécution : `docs/product/SPRINTS.md`
+- Idées : `docs/product/BACKLOG.md` (modèle BL-XXX)
+- Ne pas dupliquer le contenu de `RULES.md` dans `AGENTS.md` / `CLAUDE.md` / Copilot

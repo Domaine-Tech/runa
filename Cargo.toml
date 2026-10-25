@@ -1,0 +1,55 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/shared-types",
+    "crates/shared-utils",
+    "crates/platform-engine",
+    "crates/ai-engine",
+    "apps/desktop/src-tauri",
+]
+default-members = [
+    "crates/shared-types",
+    "crates/shared-utils",
+    "crates/platform-engine",
+    "crates/ai-engine",
+    "apps/desktop/src-tauri",
+]
+
+[workspace.package]
+version = "1.0.0"
+edition = "2024"
+license = "MIT"
+authors = ["Runa Contributors"]
+repository = "https://github.com/Domaine-Tech/runa"
+
+[workspace.dependencies]
+shared-types = { path = "crates/shared-types" }
+shared-utils = { path = "crates/shared-utils" }
+platform-engine = { path = "crates/platform-engine" }
+ai-engine = { path = "crates/ai-engine" }
+
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+thiserror = "2"
+specta = { version = "2.0.0-rc.22", features = ["derive", "chrono", "serde_json"] }
+tokio = { version = "1", features = ["rt-multi-thread", "sync", "macros", "time"] }
+async-trait = "0.1"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+blake3 = "1"
+similar = "2"
+whatlang = "0.16"
+directories = "5"
+toml = "0.8"
+chrono = { version = "0.4", features = ["serde"] }
+parking_lot = "0.12"
+llama-cpp-2 = "0.1.160"
+reqwest = { version = "0.12", default-features = false, features = ["blocking", "rustls-tls"] }
+
+[workspace.lints.rust]
+unsafe_code = "warn"
+
+[workspace.lints.clippy]
+unwrap_used = "deny"
+expect_used = "deny"
+all = { level = "warn", priority = -1 }
