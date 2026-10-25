@@ -5,6 +5,8 @@ Les versions suivent [ROADMAP.md](./ROADMAP.md).
 
 ## [Unreleased]
 
+## [1.0.2] — 2026-10-25
+
 ## [1.0.1] — 2026-10-25
 
 ### Added
