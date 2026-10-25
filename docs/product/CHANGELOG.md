@@ -5,6 +5,8 @@ Les versions suivent [ROADMAP.md](./ROADMAP.md).
 
 ## [Unreleased]
 
+## [1.0.1] — 2026-10-25
+
 ### Added
 - CI job `security` : `cargo clippy`, `cargo audit`, `npm audit --audit-level=high`
 - Release auto après CI verte sur push `main` (`workflow_run`) ; `workflow_dispatch` en secours
@@ -17,6 +19,7 @@ Les versions suivent [ROADMAP.md](./ROADMAP.md).
 - Licence MIT à la racine (`LICENSE`)
 
 ### Notes
+
 
 ## [1.0.0] — 2026-10-25
 
