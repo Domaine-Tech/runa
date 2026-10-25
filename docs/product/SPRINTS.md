@@ -151,7 +151,7 @@ Ordre produit : **Windows → thème → Linux → IA locale → GA (Win/Linux) 
 
 - [x] S5-1 … S5-7 + clôture 1.0.0 (2026-10-25) — workflows CI/release, `prepare_version.py`, updater minisign + tray, README / COMMANDS ; première GitHub Release via `workflow_dispatch` + secrets `TAURI_SIGNING_*` ; mesure `show_ms` documentée (budget 50 ms)
 
-**Politique de version (S5-3) — résumé :** SemVer ; tag Git `vX.Y.Z` créé par la CI ; si la version du dépôt égale la dernière GitHub Release → bump mineur `X.Y.Z` → `X.(Y+1).0` puis tag + release ; pas de republish d’un même tag. Détail : [`docs/COMMANDS.md`](../COMMANDS.md) § Release.
+**Politique de version (S5-3) — résumé :** SemVer ; **MAJOR.MINOR** = sprint / dev (avant push) ; tag Git `vX.Y.Z` créé par la CI ; si version dépôt = dernière release → bump **patch** `X.Y.Z` → `X.Y.(Z+1)` ; pas de republish d’un même tag. Détail : [`docs/COMMANDS.md`](../COMMANDS.md) § Release.
 
 **Hors sprint S5 :** Authenticode / notarisation (→ BL-015) ; macOS (→ S6) ; GGUF hors installeur (téléchargement explicite inchangé).
 

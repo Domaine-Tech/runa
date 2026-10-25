@@ -4,9 +4,10 @@
 Rules (docs/COMMANDS.md § Release):
 - Source of truth runtime: apps/desktop/src-tauri/tauri.conf.json
 - Cargo workspace + package.json must match, else fail
+- MAJOR.MINOR = dev / sprint (fixés avant push) ; la CI ne les invente pas
 - Compare to latest GitHub Release:
   - no release or repo > latest → keep repo version
-  - repo == latest → bump minor X.Y.Z → X.(Y+1).0
+  - repo == latest → bump PATCH X.Y.Z → X.Y.(Z+1)
   - repo < latest → fail (no downgrade)
 - Tag vX.Y.Z must not already exist
 
@@ -154,9 +155,9 @@ def git_tag_exists(tag: str) -> bool:
     return bool(proc2.stdout.strip())
 
 
-def bump_minor(v: tuple[int, int, int]) -> tuple[int, int, int]:
-    major, minor, _patch = v
-    return major, minor + 1, 0
+def bump_patch(v: tuple[int, int, int]) -> tuple[int, int, int]:
+    major, minor, patch = v
+    return major, minor, patch + 1
 
 
 def write_tauri_version(version: str) -> None:
@@ -273,7 +274,7 @@ def decide_version(repo_ver: str, latest: str | None) -> tuple[str, bool]:
     if c > 0:
         return repo_ver, False
     if c == 0:
-        bumped = bump_minor(repo)
+        bumped = bump_patch(repo)
         return fmt_semver(bumped), True
     die(
         f"version dépôt {repo_ver} < dernière release {latest} — "

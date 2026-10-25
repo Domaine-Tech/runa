@@ -50,7 +50,7 @@ Construire **Runa** : app bureau 100 % locale, daemon tray + **popup rapide** (`
 4. Pas de commit / push / `--force` sans demande explicite.
 5. Pas de secrets, pas de `.gguf` dans le dépôt.
 6. Vérifier : `cargo check --workspace` ; frontend `npm run check` si UI touchée.
-7. Avant **publish / Release** : passe sécu + maj deps (voir `docs/COMMANDS.md` § Pré-publish ; Prompt 11) — `cargo update` / `npm update` manuels, audits, clippy ; push `main` → CI (`security`) → **Release auto**. Un push `main` peut bumper mineur si la version est déjà publiée.
+7. Avant **publish / Release** : passe sécu + maj deps (voir `docs/COMMANDS.md` § Pré-publish ; Prompt 11) — audits, clippy ; push `main` → CI → **Release auto**. MAJOR.MINOR = sprint / dev avant push ; collision → bump **patch** seulement (`1.0.0` → `1.0.1`).
 8. Logs : `tracing` ; **jamais** le contenu presse-papiers en niveau `info`.
 
 ## 6. Interdits sécurité / éthique (projet)

@@ -45,7 +45,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-      - name: Prepare SemVer (bump mineur si collision)
+      - name: Prepare SemVer (bump patch si collision)
         id: prep
         env:
           GH_TOKEN: ${{ secrets.RELEASE_TOKEN != '' && secrets.RELEASE_TOKEN || github.token }}

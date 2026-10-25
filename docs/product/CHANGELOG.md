@@ -12,6 +12,7 @@ Les versions suivent [ROADMAP.md](./ROADMAP.md).
 - `.cargo/audit.toml` : ignores temporaires advisories `zip` (transitif updater) — BL-016
 
 ### Changed
+- Versioning release : collision → bump **patch** (`1.0.0` → `1.0.1`) ; MAJOR.MINOR = sprint / dev avant push
 
 ### Notes
 
@@ -19,7 +20,7 @@ Les versions suivent [ROADMAP.md](./ROADMAP.md).
 
 ### Added
 - CI PR : `.github/workflows/ci.yml` (`cargo check` / `test` + `npm run check`, Win + Ubuntu ; job `llama` séparé)
-- Release : `.github/workflows/release.yml` (`workflow_dispatch`) + `scripts/prepare_version.py` (bump mineur si collision, tag `vX.Y.Z`)
+- Release : `.github/workflows/release.yml` + `scripts/prepare_version.py` (bump patch si collision ; MAJOR.MINOR = sprint)
 - Bundles GA : NSIS + `.deb` + AppImage (`--features llama`) ; GGUF hors installeur
 - Auto-update : `tauri-plugin-updater` + `tauri-plugin-dialog` ; check au démarrage ; tray « Vérifier les mises à jour » avec confirmation
 - README utilisateur (install, permissions, MAJ, SmartScreen / apt)

@@ -77,7 +77,7 @@ Ce document fixe les **versions**. Le détail d’exécution est dans [SPRINTS.m
 
 - [x] CI PR (`cargo check` / `test` + `npm run check`)
 - [x] Installateurs Windows (NSIS) / Linux (`.deb` et AppImage) — artefacts produits par `release.yml`
-- [x] Pipeline release : tag auto `vX.Y.Z` + bump mineur si collision avec la dernière release
+- [x] Pipeline release : tag auto `vX.Y.Z` + bump **patch** si collision ; MAJOR.MINOR = sprint / dev
 - [x] Sync versions (Cargo workspace, `package.json`, `tauri.conf.json`, CHANGELOG)
 - [x] Auto-update (`tauri-plugin-updater` + signatures) — endpoint release uniquement, pas d’exfil texte
 - [x] Cold start popup &lt; 50 ms (mesure via log `show_ms` ; pas de seuil flaky CI)

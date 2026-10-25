@@ -168,7 +168,10 @@ Politique SemVer figée pour la GA (détail sprint : [`docs/product/SPRINTS.md`]
 | [`.github/workflows/ci.yml`](../.github/workflows/ci.yml) | push / PR | check / test / `npm run check` (Win + Ubuntu) ; job `llama` ; job **`security`** (`cargo clippy`, `cargo audit`, `npm audit --audit-level=high`) |
 | [`.github/workflows/release.yml`](../.github/workflows/release.yml) | **Auto** après CI verte sur **push `main`** (+ `workflow_dispatch` manuel) | `prepare-version` → tag `vX.Y.Z` → build NSIS / deb / AppImage (`--features llama`) → GitHub Release + `latest.json` |
 
-Chaque **push sur `main`** dont la CI réussit déclenche une Release. Si la version dépôt = dernière release → **bump mineur** auto (`1.0.0` → `1.1.0`). Les PR ne publient pas. Secours manuel : Actions → Release → Run workflow.
+Chaque **push sur `main`** dont la CI réussit déclenche une Release.  
+- **MAJOR.MINOR** : fixés par le **dev avant le push** (liés aux sprints / jalons ROADMAP) — la CI ne les change pas.  
+- Si version dépôt = dernière release → **bump patch** auto seulement (`1.0.0` → `1.0.1`).  
+Les PR ne publient pas. Secours manuel : Actions → Release → Run workflow.
 
 ### Pré-publish (avant push sur `main` qui doit sortir)
 
@@ -225,9 +228,9 @@ python scripts/prepare_version.py --dry-run --skip-gh --latest 1.0.0
    - Lit la version du dépôt (les trois fichiers doivent être identiques, sinon échec).
    - Compare à la **dernière GitHub Release**.
    - Version **nouvelle** (ou aucune release) → tag `vX.Y.Z` (si absent) + build + upload.
-   - Version **égale** à la dernière release → **bump mineur** `X.Y.Z` → `X.(Y+1).0`, sync Cargo / package.json / tauri.conf / CHANGELOG, commit `chore(release): …`, puis tag + release.
+   - Version **égale** à la dernière release → **bump patch** `X.Y.Z` → `X.Y.(Z+1)`, sync Cargo / package.json / tauri.conf / CHANGELOG, commit `chore(release): …`, puis tag + release.
    - Version **inférieure** à la dernière release → **échec** (pas de downgrade).
-3. Exemple : dernière release `v1.0.0`, dépôt encore `1.0.0` → passe à `1.1.0`, tag `v1.1.0`.
+3. Exemples : dernière release `v1.0.0`, dépôt encore `1.0.0` → `1.0.1` / tag `v1.0.1`. Nouveau sprint → le dev bump à `1.1.0` (ou `2.0.0`) **avant** le push ; la CI publie cette version telle quelle.
 4. Artefacts : NSIS (Windows), `.deb` + AppImage (Linux). GGUF **non** inclus (`createUpdaterArtifacts` signe les bundles, pas le modèle).
 5. Auto-update : `tauri-plugin-updater` + endpoint `…/releases/latest/download/latest.json` + signatures minisign. Check au démarrage (log seulement) ; installation **uniquement** via tray « Vérifier les mises à jour » + confirmation dialogue.
 6. Authenticode / notarisation : hors bloquant → [BL-015](./product/BACKLOG.md).

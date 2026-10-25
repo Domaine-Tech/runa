@@ -350,7 +350,7 @@ Sources à auditer :
 2. Signaler toute divergence version / terminologie / comportement.
 3. Les pointeurs IA ne doivent pas recopier RULES.md en entier.
 4. Features codées sans doc / sans changelog / hors sprint → signaler.
-5. Pour pipeline release / tags / bump mineur / updater → déléguer à **Prompt 13** (ne pas improvisér de CI ici).
+5. Pour pipeline release / tags / bump patch / updater → déléguer à **Prompt 13** (ne pas improvisér de CI ici).
 </rules>
 
 <step_by_step_instructions>
@@ -568,7 +568,7 @@ Si l'utilisateur publie / release / « avant publish » :
 2. Commits atomiques (feat/fix/refactor/docs/chore) — pas de fourre-tout.
 3. Ne pas lancer cargo update / npm update sans demander si ce n'est pas un contexte publish.
 4. Lister fichiers stagés + commandes exactes prêtes.
-5. Rappeler qu'un push sur `main` peut publier une release (bump mineur si collision).
+5. Rappeler qu'un push sur `main` peut publier une release (bump patch si collision ; MAJOR.MINOR = sprint).
 </rules>
 
 <step_by_step_instructions>
@@ -655,9 +655,10 @@ Politique de version (obligatoire) :
 2. Tag Git vX.Y.Z créé automatiquement par la CI release (pas de republish d’un même tag).
 3. Job prepare-version : lire la version dépôt ; comparer à la dernière GitHub Release ;
    - si nouvelle → tagger vX.Y.Z (si absent) et publier ;
-   - si égale à la dernière release → bump MINEUR X.Y.Z → X.(Y+1).0, sync fichiers, puis tag + release.
-4. Sync à chaque bump : Cargo.toml workspace, package.json, tauri.conf.json, CHANGELOG, ROADMAP/SPRINTS si jalon.
-5. Avant publish : Pré-publish (COMMANDS) — maj deps manuelle + audits + clippy ; push `main` → CI → Release auto (`workflow_run`).
+   - si égale à la dernière release → bump PATCH X.Y.Z → X.Y.(Z+1), sync fichiers, puis tag + release.
+4. MAJOR.MINOR fixés par le dev / sprint avant push ; la CI ne les invente pas.
+5. Sync à chaque bump : Cargo.toml workspace, package.json, tauri.conf.json, CHANGELOG, ROADMAP/SPRINTS si jalon.
+6. Avant publish : Pré-publish (COMMANDS) — maj deps manuelle + audits + clippy ; push `main` → CI → Release auto (`workflow_run`).
 Réf. détail : docs/COMMANDS.md § Release / Pré-publish.
 Périmètre : {{PERIMETRE_RELEASE_OU_S5}}
 </context>
@@ -674,7 +675,7 @@ Périmètre : {{PERIMETRE_RELEASE_OU_S5}}
 <step_by_step_instructions>
 Étape 1 : Audit CI (check + security) / bundle / updater / versions.
 Étape 2 : Concevoir workflows PR (check + security) vs release (prepare-version → build → upload).
-Étape 3 : Détailler bump mineur si collision + tag auto.
+Étape 3 : Détailler bump patch si collision + MAJOR.MINOR sprint + tag auto.
 Étape 4 : Artefacts NSIS / deb / AppImage + latest.json + signatures.
 Étape 5 : Secrets, rotation clés, risques SmartScreen / Apt.
 Étape 6 : Checklist Pré-publish + sync docs (COMMANDS, CHANGELOG, ROADMAP, SPRINTS, PROMPTS).
@@ -728,7 +729,7 @@ Génère un PROMPT prêt à l'emploi qui :
 | Trigger | 2 impulsions / 400 ms ; WindowToken avant show |
 | LLM | Thread `llm-worker` ; Tokio n’infère pas |
 | Gouvernance | Sprints dans `docs/product/SPRINTS.md` ; idées dans `BACKLOG.md` |
-| Release / versions | Tag `vX.Y.Z` auto ; bump mineur si collision ; Prompt 13 + COMMANDS § Release |
+| Release / versions | Tag `vX.Y.Z` auto ; bump patch si collision ; MAJOR.MINOR = sprint ; Prompt 13 |
 | Pré-publish | Maj deps manuelle + audits ; CI `security` ; push `main` → Release auto (Prompt 11) |
 | Règles IA | **Une seule** source : `docs/ai/RULES.md` |
 | Mode Plan | Pas de code sans validation utilisateur |
