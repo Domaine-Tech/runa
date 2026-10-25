@@ -188,8 +188,18 @@ Permet d’ajouter librement des idées **sans polluer** [SPRINTS.md](./SPRINTS.
 - **Hors scope / risques :** Coût certificat ; hors bloquant S5 si absent (updater minisign reste requis).
 - **Liens :** S5, docs/COMMANDS.md § Release, Prompt 13
 
+### BL-016 — DevSecOps avancé (CodeQL / SBOM / zip updater)
+- **Statut :** Proposed
+- **Priorité :** P2
+- **Effort :** M
+- **Version cible suggérée :** 1.0+
+- **Problème :** CI a audit + clippy ; manque SBOM, CodeQL, et fix des advisories `zip` (RUSTSEC-2026-0367…0369) ignorés temporairement dans `audit.toml` (transitif updater).
+- **Proposition :** Bump `tauri-plugin-updater` / `zip` dès patch ; ajouter CodeQL + SBOM (CycloneDX) sur release ; revoir ignores `audit.toml`.
+- **Hors scope / risques :** Faux positifs ; temps CI.
+- **Liens :** `.github/workflows/ci.yml`, `audit.toml`, Prompt 11 / 13
+
 ---
 
 ## Prochaine ID libre
 
-`BL-016`
+`BL-017`

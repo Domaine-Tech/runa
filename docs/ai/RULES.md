@@ -50,7 +50,8 @@ Construire **Runa** : app bureau 100 % locale, daemon tray + **popup rapide** (`
 4. Pas de commit / push / `--force` sans demande explicite.
 5. Pas de secrets, pas de `.gguf` dans le dépôt.
 6. Vérifier : `cargo check --workspace` ; frontend `npm run check` si UI touchée.
-7. Logs : `tracing` ; **jamais** le contenu presse-papiers en niveau `info`.
+7. Avant **publish / Release** : passe sécu + maj deps (voir `docs/COMMANDS.md` § Pré-publish ; Prompt 11) — `cargo update` / `npm update` manuels, `cargo audit`, `npm audit --audit-level=high`, `cargo clippy` ; commit des lockfiles si besoin ; CI job `security` doit être vert.
+8. Logs : `tracing` ; **jamais** le contenu presse-papiers en niveau `info`.
 
 ## 6. Interdits sécurité / éthique (projet)
 
@@ -65,3 +66,4 @@ Construire **Runa** : app bureau 100 % locale, daemon tray + **popup rapide** (`
 - [ ] Bindings specta régénérés ou `bindings.ts` cohérent si IPC changé
 - [ ] Docs produit mises à jour si jalon / backlog touché
 - [ ] `cargo check --workspace` OK
+- [ ] Si release : Pré-publish (audits + maj deps + CI `security` verte) OK

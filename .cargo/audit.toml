@@ -1,0 +1,11 @@
+# cargo-audit — https://github.com/rustsec/rustsec/tree/main/cargo-audit
+# Réévaluer à chaque pré-release (`fait prompt 11` / COMMANDS § Pré-publish).
+
+[advisories]
+ignore = [
+  # Transitif via `zip` (souvent tauri-plugin-updater). Runa n'appelle pas ZipArchive::extract
+  # sur des archives non fiables. Retirer dès qu'un bump updater/zip corrige.
+  "RUSTSEC-2026-0367",
+  "RUSTSEC-2026-0368",
+  "RUSTSEC-2026-0369",
+]

@@ -165,10 +165,40 @@ Politique SemVer figée pour la GA (détail sprint : [`docs/product/SPRINTS.md`]
 
 | Fichier | Déclencheur | Rôle |
 | --- | --- | --- |
-| [`.github/workflows/ci.yml`](../.github/workflows/ci.yml) | push / PR | `cargo check` + `cargo test` + `npm run check` (Win + Ubuntu, sans `llama`) ; job séparé `llama` sur Ubuntu |
+| [`.github/workflows/ci.yml`](../.github/workflows/ci.yml) | push / PR | check / test / `npm run check` (Win + Ubuntu) ; job `llama` ; job **`security`** (`cargo clippy`, `cargo audit`, `npm audit --audit-level=high`) |
 | [`.github/workflows/release.yml`](../.github/workflows/release.yml) | **`workflow_dispatch` uniquement** | `prepare-version` → tag `vX.Y.Z` → build NSIS / deb / AppImage (`--features llama`) → GitHub Release + `latest.json` |
 
 Un push sur `main` ne publie **pas** de release (évite un bump mineur à chaque commit).
+
+### Pré-publish (avant commit de release / avant `workflow_dispatch`)
+
+Obligatoire avant de publier une release (agents : **Prompt 11** puis **Prompt 13**). La CI `security` rejoue audits + clippy sur le push, mais la **maj des packages** reste manuelle (pas de `cargo update` / `npm update` automatique en CI).
+
+```powershell
+# Depuis la racine du dépôt
+cargo update
+cargo audit
+cargo clippy --workspace --locked
+cargo check --workspace --locked
+cargo test --workspace --locked
+
+cd apps/desktop
+npm outdated
+npm update
+npm audit --audit-level=high
+npm run check
+cd ../..
+```
+
+Puis :
+
+1. Relire le diff des lockfiles (`Cargo.lock`, `package-lock.json`) — pas de bump majeur surprise.
+2. Réévaluer [`.cargo/audit.toml`](../.cargo/audit.toml) (ignores RUSTSEC) ; retirer dès qu’un patch existe (voir [BL-016](./product/BACKLOG.md)).
+3. Commit atomique éventuel `chore(deps): …` + push.
+4. Attendre CI verte (y compris job `security`).
+5. **Actions → Release → Run workflow**.
+
+Sanity sans publish (commit courant) : au minimum `cargo check` / `cargo test` / `npm run check` ; audits recommandés si deps touchées.
 
 ### Fichiers de version (doivent rester alignés)
 
@@ -214,7 +244,8 @@ Génération locale (hors dépôt) :
 
 ```powershell
 cd apps/desktop
-npx tauri signer generate -w "$env:USERPROFILE\.tauri\runa.key" --ci
+# Avec mot de passe (recommandé) — ne pas coller le mdp dans un chat
+npx tauri signer generate -w "$env:USERPROFILE\.tauri\runa.key" -p "TON_MDP" -f --ci
 ```
 
 La clé publique déjà embarquée dans `tauri.conf.json` correspond à la paire générée pour S5 (fichier privé typique : `%USERPROFILE%\.tauri\runa.key`).  
@@ -240,6 +271,8 @@ Budget cold `show()` preview **&lt; 50 ms**. Mesure : dans les logs au niveau `i
 - [ ] `CHANGELOG.md` : section Unreleased → version datée (fait par `prepare_version` si bump / première pub)
 - [ ] Tag `vX.Y.Z` = version syncée
 - [ ] ROADMAP / SPRINTS mis à jour si jalon (0.5.0, 1.0.0, …)
+- [ ] Pré-publish : maj deps + `cargo audit` / `npm audit` / clippy ; lockfiles commités si besoin
+- [ ] CI verte dont job **`security`**
 - [ ] Secrets updater configurés ; pas de `.gguf` / `.key` dans le commit
 - [ ] Lancer **Actions → Release → Run workflow** (`workflow_dispatch`)
 

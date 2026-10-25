@@ -89,3 +89,50 @@ jobs:
         env:
           LIBCLANG_PATH: /usr/lib/llvm-14/lib
         run: cargo check -p runa-desktop --features llama --locked
+
+  security:
+    name: security (audit + clippy)
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Linux Tauri dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libwebkit2gtk-4.1-dev \
+            libayatana-appindicator3-dev \
+            librsvg2-dev \
+            patchelf \
+            libssl-dev
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+
+      - uses: swatinem/rust-cache@v2
+        with:
+          shared-key: security-ubuntu
+
+      - name: Install cargo-audit
+        run: cargo install cargo-audit --locked
+
+      - name: cargo clippy (workspace)
+        # Respecte les lints workspace (unwrap/expect deny). Pas de -D warnings global
+        # (trop bruyant sur deps / too_many_arguments historiques).
+        run: cargo clippy --workspace --locked
+
+      - name: cargo audit
+        run: cargo audit
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: apps/desktop/package-lock.json
+
+      - name: npm audit (high+)
+        working-directory: apps/desktop
+        run: |
+          npm ci
+          npm audit --audit-level=high

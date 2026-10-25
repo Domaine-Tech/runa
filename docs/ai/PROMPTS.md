@@ -46,8 +46,8 @@
 | --- | --- | --- |
 | **6** | `fait prompt 6` / `prompt 6` | Alignement code ↔ docs ↔ versions ↔ règles IA |
 | **10** | `fait prompt 10 S1` / `réalise sprint S1` | Audit / réalisation / clôture sprint |
-| **11** | `fait prompt 11` / `commit et push` | Sanity check + commits atomiques (après validation) |
-| **13** | `fait prompt 13` / `prompt 13` / `release CI` | CI, installateurs, releases, auto-update, versioning |
+| **11** | `fait prompt 11` / `commit et push` | Sanity + **pré-publish sécu/deps** + commits atomiques (après validation) |
+| **13** | `fait prompt 13` / `prompt 13` / `release CI` | CI (dont job security), installateurs, releases, auto-update, versioning |
 | **Bonus** | `fait prompt bonus` / `meta prompt` | Générer un prompt Mode Plan sur mesure |
 
 ### Guide rapide par objectif
@@ -63,6 +63,7 @@
 - Tests → `fait prompt 8`
 - Cohérence docs/versions → `fait prompt 6` (release / tags / bump → `fait prompt 13`)
 - Packaging / CI / MAJ auto → `fait prompt 13`
+- Avant publish : maj packages + audits → `fait prompt 11` puis Release (`workflow_dispatch`)
 - Sprint → `réalise sprint S1` (voir `docs/product/SPRINTS.md`)
 - Git propre → `fait prompt 11`
 - Prompt custom → `fait prompt bonus`
@@ -542,7 +543,7 @@ Sources : SPRINTS.md, ROADMAP.md, BACKLOG.md, CHANGELOG.md, code réel.
 
 ```markdown
 <role>
-Tu es un Lead DevOps & Git Master (commits atomiques, Conventional Commits).
+Tu es un Lead DevOps & Git Master (commits atomiques, Conventional Commits, pré-publish sécu).
 </role>
 
 <context>
@@ -550,29 +551,36 @@ Projet : Runa.
 Invariants pré-commit :
 - Alignement versions Cargo workspace / package.json / tauri.conf.json / CHANGELOG si release
 - Politique tag/bump (S5) : voir docs/COMMANDS.md § Release et Prompt 13 — ne pas republier un même vX.Y.Z
-- Exclure : target/, node_modules/, *.gguf, .env, secrets
+- Exclure : target/, node_modules/, *.gguf, .env, *.key, secrets
 - cargo check --workspace ; npm run check si UI touchée
 - Messages de commit en français, Conventional Commits
 - Pas de commit/push sans validation explicite (RULES.md)
+Si l'utilisateur publie / release / « avant publish » :
+- Suivre docs/COMMANDS.md § Pré-publish (maj deps manuelle + audits).
+- cargo update ; cargo audit ; cargo clippy --workspace --locked
+- npm outdated / npm update (apps/desktop) ; npm audit --audit-level=high
+- Relire lockfiles ; réévaluer .cargo/audit.toml (ignores) ; commit chore(deps) si besoin
+- CI job security doit être vert avant workflow_dispatch Release
 </context>
 
 <rules>
 1. STRICT MODE PLAN : aucune commande git destructive ; pas de commit/push avant OK utilisateur.
-2. Commits atomiques (feat/fix/refactor/docs) — pas de fourre-tout.
-3. Lister fichiers stagés + commandes exactes prêtes.
+2. Commits atomiques (feat/fix/refactor/docs/chore) — pas de fourre-tout.
+3. Ne pas lancer cargo update / npm update sans demander si ce n'est pas un contexte publish.
+4. Lister fichiers stagés + commandes exactes prêtes.
 </rules>
 
 <step_by_step_instructions>
-Étape 1 : git status / diff / filtrage sécurité.
-Étape 2 : Sanity checks.
+Étape 1 : git status / diff / filtrage sécurité (pas de secrets).
+Étape 2 : Si publish → Pré-publish (deps + audit + clippy) ; sinon sanity check classique.
 Étape 3 : Découpage commits + messages FR.
 Étape 4 : Doc (CHANGELOG) si besoin.
-Étape 5 : Séquence git add/commit/push proposée.
+Étape 5 : Séquence git add/commit/push proposée ; rappeler d'attendre CI security avant Release.
 </step_by_step_instructions>
 
 <output_format>
 1. Bilan arbre Git
-2. Sanity check & versions
+2. Sanity check & versions (& Pré-publish si applicable)
 3. Commits atomiques proposés
 4. Commandes exactes
 5. Demande de validation
@@ -631,16 +639,16 @@ Périmètre : {{FICHIERS_CIBLES}}
 
 ## Prompt 13 — CI, installateurs, releases, auto-update & versioning
 
-> Packaging GA (S5) : GitHub Actions, bundles Tauri, tags SemVer, `tauri-plugin-updater`.
+> Packaging GA (S5) : GitHub Actions, bundles Tauri, tags SemVer, `tauri-plugin-updater`, job CI security.
 
 ```markdown
 <role>
-Tu es un Release Engineer (Tauri v2, GitHub Actions, SemVer, auto-update desktop).
+Tu es un Release Engineer (Tauri v2, GitHub Actions, SemVer, auto-update desktop, DevSecOps léger).
 </role>
 
 <context>
 Projet : Runa (100 % local — l’updater ne télécharge que les binaires signés / métadonnées de release, jamais le texte utilisateur).
-Sprint : S5 → v1.0.0 (docs/product/SPRINTS.md).
+Sprint : S5 → v1.0.0 (docs/product/SPRINTS.md) ; post-GA : maintenir CI/release.
 Politique de version (obligatoire) :
 1. SemVer MAJOR.MINOR.PATCH ; source runtime = apps/desktop/src-tauri/tauri.conf.json, alignée Cargo workspace + apps/desktop/package.json.
 2. Tag Git vX.Y.Z créé automatiquement par la CI release (pas de republish d’un même tag).
@@ -648,35 +656,38 @@ Politique de version (obligatoire) :
    - si nouvelle → tagger vX.Y.Z (si absent) et publier ;
    - si égale à la dernière release → bump MINEUR X.Y.Z → X.(Y+1).0, sync fichiers, puis tag + release.
 4. Sync à chaque bump : Cargo.toml workspace, package.json, tauri.conf.json, CHANGELOG, ROADMAP/SPRINTS si jalon.
-Réf. détail : docs/COMMANDS.md § Release.
+5. Avant publish : Pré-publish (COMMANDS) — maj deps manuelle + cargo audit + npm audit + clippy ; CI job security vert ; puis workflow_dispatch.
+Réf. détail : docs/COMMANDS.md § Release / Pré-publish.
 Périmètre : {{PERIMETRE_RELEASE_OU_S5}}
 </context>
 
 <rules>
 1. STRICT MODE PLAN — zéro workflow/code sans validation utilisateur.
 2. GGUF hors installeur (download_model explicite).
-3. macOS hors S5 (S6). Authenticode / notarisation → BL-015 si pas de certificat.
+3. macOS hors S5 (S6). Authenticode / notarisation → BL-015 ; DevSecOps avancé → BL-016.
 4. Secrets (clés updater minisign, tokens) jamais commités.
 5. Ne pas inventer de télémétrie ; endpoint updater = GitHub Releases / latest.json uniquement.
+6. Pas de cargo update / npm update automatique dans les workflows (humain + Prompt 11).
 </rules>
 
 <step_by_step_instructions>
-Étape 1 : Audit CI / bundle / updater / fichiers de version existants.
-Étape 2 : Concevoir workflows PR (check) vs release (prepare-version → build → upload).
-Étape 3 : Détailler la règle bump mineur si collision + création auto du tag.
-Étape 4 : Artefacts NSIS / deb / AppImage + latest.json updater + signatures.
+Étape 1 : Audit CI (check + security) / bundle / updater / versions.
+Étape 2 : Concevoir workflows PR (check + security) vs release (prepare-version → build → upload).
+Étape 3 : Détailler bump mineur si collision + tag auto.
+Étape 4 : Artefacts NSIS / deb / AppImage + latest.json + signatures.
 Étape 5 : Secrets, rotation clés, risques SmartScreen / Apt.
-Étape 6 : Checklist sync docs/versions (COMMANDS, CHANGELOG, ROADMAP, SPRINTS).
-Étape 7 : Plan `[ ]` aligné S5-1 … S5-7.
+Étape 6 : Checklist Pré-publish + sync docs (COMMANDS, CHANGELOG, ROADMAP, SPRINTS, PROMPTS).
+Étape 7 : Plan `[ ]` (S5 ou maintenance release).
 </step_by_step_instructions>
 
 <output_format>
-1. Diagnostic release / CI
+1. Diagnostic release / CI / security
 2. Politique version (rappel + écarts)
 3. Design workflows + artefacts
 4. Updater + secrets
-5. Plan `[ ]` S5
-6. Validation
+5. Pré-publish (deps + audits)
+6. Plan `[ ]`
+7. Validation
 </output_format>
 ```
 
@@ -717,6 +728,7 @@ Génère un PROMPT prêt à l'emploi qui :
 | LLM | Thread `llm-worker` ; Tokio n’infère pas |
 | Gouvernance | Sprints dans `docs/product/SPRINTS.md` ; idées dans `BACKLOG.md` |
 | Release / versions | Tag `vX.Y.Z` auto ; bump mineur si collision ; Prompt 13 + COMMANDS § Release |
+| Pré-publish | Maj deps manuelle + audits (cargo/npm) + clippy ; CI job `security` ; Prompt 11 puis Release |
 | Règles IA | **Une seule** source : `docs/ai/RULES.md` |
 | Mode Plan | Pas de code sans validation utilisateur |
 

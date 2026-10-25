@@ -6,6 +6,9 @@ Les versions suivent [ROADMAP.md](./ROADMAP.md).
 ## [Unreleased]
 
 ### Added
+- CI job `security` : `cargo clippy`, `cargo audit`, `npm audit --audit-level=high`
+- Docs Pré-publish (COMMANDS) + Prompt 11/13 / RULES : maj deps manuelle avant publish
+- `.cargo/audit.toml` : ignores temporaires advisories `zip` (transitif updater) — BL-016
 
 ### Changed
 
