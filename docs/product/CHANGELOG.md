@@ -13,6 +13,7 @@ Les versions suivent [ROADMAP.md](./ROADMAP.md).
 - Docs Pré-publish (COMMANDS) + Prompt 11/13 / RULES : maj deps manuelle avant publish
 - `.cargo/audit.toml` : ignores temporaires advisories `zip` (transitif updater) — BL-016
 - Lancement au démarrage OS par défaut (`tauri-plugin-autostart`) ; désactivable via Apparence → **Lancer au démarrage**
+- Affichage de la version runtime (`vX.Y.Z`) à côté du titre Runa (popup + fenêtre principale)
 
 ### Changed
 - Versioning release : collision → bump **patch** (`1.0.0` → `1.0.1`) ; MAJOR.MINOR = sprint / dev avant push

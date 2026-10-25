@@ -6,6 +6,8 @@
   interface Props {
     mode: "popup" | "main";
     activeTab: TabId;
+    /** Version runtime Tauri (ex. 1.0.1), affichée à côté du titre. */
+    version?: string;
     ontab: (tab: TabId) => void;
     ondrag?: (e: MouseEvent) => void;
     ondblclick?: () => void;
@@ -18,6 +20,7 @@
   let {
     mode,
     activeTab,
+    version = "",
     ontab,
     ondrag,
     ondblclick,
@@ -45,6 +48,11 @@
         aria-hidden="true"
       ></span>
       <h1 class="text-sm font-semibold tracking-wide text-runa-text">Runa</h1>
+      {#if version}
+        <span class="text-[11px] tabular-nums text-runa-muted" title="Version">
+          v{version}
+        </span>
+      {/if}
     </div>
     <div class="relative z-10">
       <TabBar active={activeTab} onchange={ontab} />
@@ -68,6 +76,11 @@
         aria-hidden="true"
       ></span>
       <h1 class="text-sm font-semibold tracking-wide text-runa-text">Runa</h1>
+      {#if version}
+        <span class="text-[11px] tabular-nums text-runa-muted" title="Version">
+          v{version}
+        </span>
+      {/if}
     </div>
     <TabBar active={activeTab} onchange={ontab} />
   </header>

@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
+  import { getVersion } from "@tauri-apps/api/app";
   import { listen } from "@tauri-apps/api/event";
   import { getCurrentWindow } from "@tauri-apps/api/window";
   import ActionBar from "./components/ActionBar.svelte";
@@ -27,6 +28,7 @@
   let accent = $state<AccentPreset>("indigo");
   let density = $state<UiDensity>("comfortable");
   let launchAtLogin = $state(true);
+  let appVersion = $state("");
   let modelPath = $state("");
   let downloadBusy = $state(false);
   let downloadLabel = $state<string | null>(null);
@@ -112,6 +114,12 @@
     store.windowMode = label === "main" ? "main" : "popup";
 
     void (async () => {
+      try {
+        appVersion = await getVersion();
+      } catch {
+        appVersion = "";
+      }
+
       const cfg = await commands.getConfig();
       if (cfg.status === "ok") {
         applyUiConfig(cfg.data.ui);
@@ -320,6 +328,7 @@
   <AppHeader
     mode={store.windowMode}
     activeTab={store.activeTab}
+    version={appVersion}
     ontab={(tab) => (store.activeTab = tab)}
     ondrag={(e) => void dragWindow(e)}
     ondblclick={() => void toggleMaximize()}

@@ -19,6 +19,7 @@
     "core:window:allow-outer-size",
     "core:window:allow-current-monitor",
     "core:window:allow-set-theme",
+    "core:app:allow-version",
     "core:app:allow-set-app-theme",
     "updater:default",
     "dialog:default",
