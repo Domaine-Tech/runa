@@ -173,6 +173,8 @@ Chaque **push sur `main`** dont la CI réussit déclenche une Release.
 - Si version dépôt = dernière release → **bump patch** auto seulement (`1.0.0` → `1.0.1`).  
 Les PR ne publient pas. Secours manuel : Actions → Release → Run workflow.
 
+**Dépôt public requis pour les MAJ clients :** l’updater Tauri télécharge `latest.json` et les binaires **sans authentification**. Un repo GitHub privé bloque en pratique les mises à jour des apps installées. Runa doit rester **public** une fois la GA publiée (secrets updater restent dans GitHub Secrets, jamais dans le git).
+
 ### Pré-publish (avant push sur `main` qui doit sortir)
 
 Recommandé avant un push `main` destiné à être publié (agents : **Prompt 11** / **Prompt 13**). La CI `security` rejoue audits + clippy ; la **maj des packages** reste manuelle (pas de `cargo update` / `npm update` automatique en CI).
@@ -232,7 +234,7 @@ python scripts/prepare_version.py --dry-run --skip-gh --latest 1.0.0
    - Version **inférieure** à la dernière release → **échec** (pas de downgrade).
 3. Exemples : dernière release `v1.0.0`, dépôt encore `1.0.0` → `1.0.1` / tag `v1.0.1`. Nouveau sprint → le dev bump à `1.1.0` (ou `2.0.0`) **avant** le push ; la CI publie cette version telle quelle.
 4. Artefacts : NSIS (Windows), `.deb` + AppImage (Linux). GGUF **non** inclus (`createUpdaterArtifacts` signe les bundles, pas le modèle).
-5. Auto-update : `tauri-plugin-updater` + endpoint `…/releases/latest/download/latest.json` + signatures minisign. Check au démarrage (log seulement) ; installation **uniquement** via tray « Vérifier les mises à jour » + confirmation dialogue.
+5. Auto-update : `tauri-plugin-updater` + endpoint `…/releases/latest/download/latest.json` + signatures minisign. Dialogue au démarrage **et** tray (« Installer » / « Plus tard ») ; si inférence en cours → seconde confirmation ; jamais d’install silencieuse.
 6. Authenticode / notarisation : hors bloquant → [BL-015](./product/BACKLOG.md).
 
 ### Secrets GitHub (jamais commités)

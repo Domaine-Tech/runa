@@ -93,6 +93,8 @@ jobs:
             libfuse2 \
             wget \
             file
+          # bindgen / llama-cpp-sys (même chemin que le job CI llama)
+          echo "LIBCLANG_PATH=/usr/lib/llvm-14/lib" >> "$GITHUB_ENV"
 
       - name: Install LLVM (Windows, bindgen llama)
         if: runner.os == 'Windows'

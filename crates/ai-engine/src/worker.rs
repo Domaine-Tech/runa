@@ -130,6 +130,11 @@ impl LlmWorker {
             })
     }
 
+    /// `true` si une génération est en cours (MAJ ne doit pas redémarrer sans accord).
+    pub fn is_busy(&self) -> bool {
+        self.active_generation.load(Ordering::SeqCst) != 0
+    }
+
     #[cfg(test)]
     pub fn active_generation(&self) -> Arc<AtomicU64> {
         Arc::clone(&self.active_generation)

@@ -38,9 +38,9 @@ Permissions / comportements utiles :
 
 ## Mises à jour
 
-- Au démarrage, Runa **vérifie** silencieusement s’il existe une version plus récente (log seulement).
-- Pour installer : tray → **Vérifier les mises à jour** → confirmer le dialogue.
-- Signature **minisign** (pas Authenticode). Endpoint : GitHub `latest.json` uniquement.
+- Au démarrage **et** via le tray (**Vérifier les mises à jour**), Runa propose un dialogue **Installer / Plus tard** — jamais d’install silencieuse.
+- Si une correction/traduction est en cours, une **seconde confirmation** est demandée (la MAJ annule la tâche et redémarre).
+- Signature **minisign** (pas Authenticode). Endpoint : GitHub `latest.json` (dépôt **public** requis pour les clients).
 
 ## Développement
 
@@ -60,4 +60,4 @@ Règles agents / architecture : [`docs/ai/RULES.md`](docs/ai/RULES.md) · [`docs
 
 ## Licence
 
-MIT — voir les métadonnées du workspace Cargo.
+[MIT](LICENSE)

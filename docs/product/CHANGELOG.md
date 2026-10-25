@@ -13,6 +13,8 @@ Les versions suivent [ROADMAP.md](./ROADMAP.md).
 
 ### Changed
 - Versioning release : collision → bump **patch** (`1.0.0` → `1.0.1`) ; MAJOR.MINOR = sprint / dev avant push
+- Updater : dialogue au démarrage + confirmation si inférence en cours ; Release Linux (`LIBCLANG_PATH`) ; dépôt public pour MAJ clients
+- Licence MIT à la racine (`LICENSE`)
 
 ### Notes
 

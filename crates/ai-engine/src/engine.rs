@@ -13,6 +13,8 @@ pub trait LocalAiEngine: Send + Sync {
     async fn translate(&self, req: TranslateRequest) -> Result<(), RunaError>;
     async fn cancel(&self) -> Result<(), RunaError>;
     fn subscribe(&self) -> broadcast::Receiver<InferenceEvent>;
+    /// Inférence en cours (génération active) — utilisé pour ne pas couper le travail (MAJ).
+    fn is_busy(&self) -> bool;
 }
 
 struct WorkerAiEngine {
@@ -35,6 +37,10 @@ impl LocalAiEngine for WorkerAiEngine {
 
     fn subscribe(&self) -> broadcast::Receiver<InferenceEvent> {
         self.worker.subscribe()
+    }
+
+    fn is_busy(&self) -> bool {
+        self.worker.is_busy()
     }
 }
 
