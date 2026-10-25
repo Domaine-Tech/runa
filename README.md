@@ -21,7 +21,7 @@ Téléchargez la dernière release : [GitHub Releases](https://github.com/Domain
 1. Exécuter l’installeur **NSIS** (`.exe`).
 2. Au premier lancement, Windows SmartScreen peut avertir (binaire non Authenticode — voir backlog BL-015). Choisir « Informations complémentaires » → exécuter quand même si vous faites confiance à la source.
 3. **WebView2** est requis (bootstrap souvent inclus / déjà présent sur Windows 11).
-4. Ouvrir Runa depuis le tray → fenêtre principale → **Télécharger le modèle** (GGUF, hash blake3). Le modèle n’est **pas** dans l’installeur.
+4. Au **premier lancement** (fenêtre principale), le modèle GGUF se télécharge automatiquement s’il est absent (hash blake3). La barre « Modèle local » disparaît une fois installé. Le GGUF n’est **pas** dans l’installeur.
 5. Par défaut, Runa **se lance au démarrage** de la session. Pour désactiver : fenêtre principale → Apparence → décocher **Lancer au démarrage**.
 
 ### Linux

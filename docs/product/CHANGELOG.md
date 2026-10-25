@@ -5,6 +5,15 @@ Les versions suivent [ROADMAP.md](./ROADMAP.md).
 
 ## [Unreleased]
 
+## [1.0.3] — 2026-10-25
+
+### Added
+- Identité visuelle : rune Ingwaz (ambre) — icônes app / tray / installateur + marque dans l’en-tête (fenêtre principale et popup)
+- Modèle : téléchargement auto au premier lancement si absent ; barre UI masquée quand le GGUF est prêt
+
+### Changed
+- Icônes : source `icon.svg` ; assets AppX / brouillons candidats retirés
+
 ## [1.0.2] — 2026-10-25
 
 ## [1.0.1] — 2026-10-25

@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { TabId } from "../lib/store.svelte";
+  import RunaMark from "./RunaMark.svelte";
   import TabBar from "./TabBar.svelte";
   import WindowControls from "./WindowControls.svelte";
 
@@ -43,10 +44,7 @@
       ondblclick={() => ondblclick?.()}
     ></div>
     <div class="relative z-10 flex items-center gap-2">
-      <span
-        class="inline-block h-2 w-2 rounded-sm bg-runa-accent"
-        aria-hidden="true"
-      ></span>
+      <RunaMark />
       <h1 class="text-sm font-semibold tracking-wide text-runa-text">Runa</h1>
       {#if version}
         <span class="text-[11px] tabular-nums text-runa-muted" title="Version">
@@ -71,10 +69,7 @@
 {:else}
   <header class="mb-0 flex items-center justify-between px-4 pt-4">
     <div class="flex items-center gap-2">
-      <span
-        class="inline-block h-2 w-2 rounded-sm bg-runa-accent"
-        aria-hidden="true"
-      ></span>
+      <RunaMark />
       <h1 class="text-sm font-semibold tracking-wide text-runa-text">Runa</h1>
       {#if version}
         <span class="text-[11px] tabular-nums text-runa-muted" title="Version">

@@ -176,7 +176,7 @@
               }
               case "done":
                 downloadBusy = false;
-                downloadLabel = "Modèle prêt";
+                downloadLabel = null;
                 modelPath = p.path;
                 break;
               case "error":
@@ -191,6 +191,12 @@
             }
           },
         );
+
+        // Premier lancement / modèle absent : téléchargement auto (barre visible tant que busy).
+        // Si le fichier GGUF est déjà là + hash OK, download_model émet Done immédiatement.
+        if (!modelPath.trim()) {
+          void onDownloadModel();
+        }
       }
 
       unlistenInference = await listen<InferenceEvent>("inference", async (event) => {
@@ -371,25 +377,28 @@
     {/if}
 
     {#if store.windowMode === "main"}
-      <div
-        class="mb-3 flex flex-wrap items-center gap-2 rounded-lg border border-runa-border bg-runa-panel px-3 py-2 text-xs"
-      >
-        <span class="text-runa-muted">Modèle local</span>
-        <span class="min-w-0 flex-1 truncate text-runa-text" title={modelPath}>
-          {modelPath || "non installé"}
-        </span>
-        <button
-          type="button"
-          class="rounded-lg bg-runa-chip px-3 py-1.5 text-runa-text hover:bg-runa-chipHover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-runa-accent disabled:opacity-50"
-          disabled={downloadBusy}
-          onclick={() => void onDownloadModel()}
+      {#if !modelPath.trim() || downloadBusy}
+        <div
+          class="mb-3 flex flex-wrap items-center gap-2 rounded-lg border border-runa-border bg-runa-panel px-3 py-2 text-xs"
         >
-          {downloadBusy ? "Téléchargement…" : "Télécharger le modèle"}
-        </button>
-        {#if downloadLabel}
-          <span class="w-full text-runa-muted">{downloadLabel}</span>
-        {/if}
-      </div>
+          <span class="text-runa-muted">Modèle local</span>
+          <span class="min-w-0 flex-1 truncate text-runa-text" title={modelPath}>
+            {modelPath || "non installé"}
+          </span>
+          {#if !downloadBusy}
+            <button
+              type="button"
+              class="rounded-lg bg-runa-chip px-3 py-1.5 text-runa-text hover:bg-runa-chipHover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-runa-accent"
+              onclick={() => void onDownloadModel()}
+            >
+              Télécharger le modèle
+            </button>
+          {/if}
+          {#if downloadLabel}
+            <span class="w-full text-runa-muted">{downloadLabel}</span>
+          {/if}
+        </div>
+      {/if}
       <label
         class="mb-1 text-xs uppercase tracking-wider text-runa-muted"
         for="source">Source</label
