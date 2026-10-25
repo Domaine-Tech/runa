@@ -75,7 +75,7 @@
       onclick={() => (open = false)}
     ></button>
     <div
-      class="absolute left-0 top-full z-50 mt-1 w-56 rounded-lg border border-runa-border bg-runa-panel p-3 shadow-lg"
+      class="absolute right-0 top-full z-50 mt-1 w-56 rounded-lg border border-runa-border bg-runa-panel p-3 shadow-lg"
       role="dialog"
       aria-label="Réglages d’apparence"
     >
