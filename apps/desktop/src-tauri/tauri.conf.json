@@ -64,7 +64,7 @@
   },
   "plugins": {
     "updater": {
-      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDBBNEE3NUE4OUUwNEE1OTcKUldTWHBRU2VxSFZLQ2hoYzdjcWNlclQxNjZON3VnRnZxSERwem9nSEU5bHN6R0dSL0xCbU9jZUIK",
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEIwREY0MjRBQUU2ODA4QUEKUldTcUNHaXVTa0xmc0Rvalljb0NTaW9RazAzYWdRVGNnMUExRzBVaUxORUEvMmlzelBFdkpWaXEK",
       "endpoints": [
         "https://github.com/Domaine-Tech/runa/releases/latest/download/latest.json"
       ]
