@@ -37,7 +37,7 @@ dependencies = [
 
 [[package]]
 name = "ai-engine"
-version = "1.0.0"
+version = "1.0.1"
 dependencies = [
  "async-trait",
  "llama-cpp-2",
@@ -2983,7 +2983,7 @@ checksum = "f6b464fbc74e149a392436b17d523f769e057cb6877f6a5c4618bc6f11800548"
 
 [[package]]
 name = "platform-engine"
-version = "1.0.0"
+version = "1.0.1"
 dependencies = [
  "ashpd",
  "async-trait",
@@ -3511,7 +3511,7 @@ dependencies = [
 
 [[package]]
 name = "runa-desktop"
-version = "1.0.0"
+version = "1.0.1"
 dependencies = [
  "ai-engine",
  "blake3",
@@ -3968,7 +3968,7 @@ dependencies = [
 
 [[package]]
 name = "shared-types"
-version = "1.0.0"
+version = "1.0.1"
 dependencies = [
  "chrono",
  "serde",
@@ -3979,7 +3979,7 @@ dependencies = [
 
 [[package]]
 name = "shared-utils"
-version = "1.0.0"
+version = "1.0.1"
 dependencies = [
  "blake3",
  "chrono",

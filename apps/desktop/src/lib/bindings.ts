@@ -137,7 +137,11 @@ keep_alive_ms?: number | null; max_tokens: number; temperature_correct: number; 
 /**
  * Configuration applicative (chargée depuis TOML via `shared-utils`).
  */
-export type AppConfig = { trigger: TriggerConfig; ai: AiConfig; ui: UiConfig; launch_at_login: boolean }
+export type AppConfig = { trigger: TriggerConfig; ai: AiConfig; ui: UiConfig; 
+/**
+ * Lancer Runa au démarrage de la session OS (défaut : oui).
+ */
+launch_at_login?: boolean }
 export type DiffKind = "equal" | "insert" | "delete"
 /**
  * Segment de diff mot-à-mot pour l'affichage UI.
