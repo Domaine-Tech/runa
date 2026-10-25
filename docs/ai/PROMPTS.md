@@ -63,7 +63,7 @@
 - Tests → `fait prompt 8`
 - Cohérence docs/versions → `fait prompt 6` (release / tags / bump → `fait prompt 13`)
 - Packaging / CI / MAJ auto → `fait prompt 13`
-- Avant publish : maj packages + audits → `fait prompt 11` puis Release (`workflow_dispatch`)
+- Avant publish : maj packages + audits → `fait prompt 11` puis push `main` (Release auto après CI)
 - Sprint → `réalise sprint S1` (voir `docs/product/SPRINTS.md`)
 - Git propre → `fait prompt 11`
 - Prompt custom → `fait prompt bonus`
@@ -560,7 +560,7 @@ Si l'utilisateur publie / release / « avant publish » :
 - cargo update ; cargo audit ; cargo clippy --workspace --locked
 - npm outdated / npm update (apps/desktop) ; npm audit --audit-level=high
 - Relire lockfiles ; réévaluer .cargo/audit.toml (ignores) ; commit chore(deps) si besoin
-- CI job security doit être vert avant workflow_dispatch Release
+- CI job security doit être vert ; Release part **auto** après CI sur push `main` (secours : workflow_dispatch)
 </context>
 
 <rules>
@@ -568,6 +568,7 @@ Si l'utilisateur publie / release / « avant publish » :
 2. Commits atomiques (feat/fix/refactor/docs/chore) — pas de fourre-tout.
 3. Ne pas lancer cargo update / npm update sans demander si ce n'est pas un contexte publish.
 4. Lister fichiers stagés + commandes exactes prêtes.
+5. Rappeler qu'un push sur `main` peut publier une release (bump mineur si collision).
 </rules>
 
 <step_by_step_instructions>
@@ -575,7 +576,7 @@ Si l'utilisateur publie / release / « avant publish » :
 Étape 2 : Si publish → Pré-publish (deps + audit + clippy) ; sinon sanity check classique.
 Étape 3 : Découpage commits + messages FR.
 Étape 4 : Doc (CHANGELOG) si besoin.
-Étape 5 : Séquence git add/commit/push proposée ; rappeler d'attendre CI security avant Release.
+Étape 5 : Séquence git add/commit/push proposée ; rappeler Release auto après CI verte sur `main`.
 </step_by_step_instructions>
 
 <output_format>
@@ -656,7 +657,7 @@ Politique de version (obligatoire) :
    - si nouvelle → tagger vX.Y.Z (si absent) et publier ;
    - si égale à la dernière release → bump MINEUR X.Y.Z → X.(Y+1).0, sync fichiers, puis tag + release.
 4. Sync à chaque bump : Cargo.toml workspace, package.json, tauri.conf.json, CHANGELOG, ROADMAP/SPRINTS si jalon.
-5. Avant publish : Pré-publish (COMMANDS) — maj deps manuelle + cargo audit + npm audit + clippy ; CI job security vert ; puis workflow_dispatch.
+5. Avant publish : Pré-publish (COMMANDS) — maj deps manuelle + audits + clippy ; push `main` → CI → Release auto (`workflow_run`).
 Réf. détail : docs/COMMANDS.md § Release / Pré-publish.
 Périmètre : {{PERIMETRE_RELEASE_OU_S5}}
 </context>
@@ -728,7 +729,7 @@ Génère un PROMPT prêt à l'emploi qui :
 | LLM | Thread `llm-worker` ; Tokio n’infère pas |
 | Gouvernance | Sprints dans `docs/product/SPRINTS.md` ; idées dans `BACKLOG.md` |
 | Release / versions | Tag `vX.Y.Z` auto ; bump mineur si collision ; Prompt 13 + COMMANDS § Release |
-| Pré-publish | Maj deps manuelle + audits (cargo/npm) + clippy ; CI job `security` ; Prompt 11 puis Release |
+| Pré-publish | Maj deps manuelle + audits ; CI `security` ; push `main` → Release auto (Prompt 11) |
 | Règles IA | **Une seule** source : `docs/ai/RULES.md` |
 | Mode Plan | Pas de code sans validation utilisateur |
 

@@ -166,13 +166,13 @@ Politique SemVer figée pour la GA (détail sprint : [`docs/product/SPRINTS.md`]
 | Fichier | Déclencheur | Rôle |
 | --- | --- | --- |
 | [`.github/workflows/ci.yml`](../.github/workflows/ci.yml) | push / PR | check / test / `npm run check` (Win + Ubuntu) ; job `llama` ; job **`security`** (`cargo clippy`, `cargo audit`, `npm audit --audit-level=high`) |
-| [`.github/workflows/release.yml`](../.github/workflows/release.yml) | **`workflow_dispatch` uniquement** | `prepare-version` → tag `vX.Y.Z` → build NSIS / deb / AppImage (`--features llama`) → GitHub Release + `latest.json` |
+| [`.github/workflows/release.yml`](../.github/workflows/release.yml) | **Auto** après CI verte sur **push `main`** (+ `workflow_dispatch` manuel) | `prepare-version` → tag `vX.Y.Z` → build NSIS / deb / AppImage (`--features llama`) → GitHub Release + `latest.json` |
 
-Un push sur `main` ne publie **pas** de release (évite un bump mineur à chaque commit).
+Chaque **push sur `main`** dont la CI réussit déclenche une Release. Si la version dépôt = dernière release → **bump mineur** auto (`1.0.0` → `1.1.0`). Les PR ne publient pas. Secours manuel : Actions → Release → Run workflow.
 
-### Pré-publish (avant commit de release / avant `workflow_dispatch`)
+### Pré-publish (avant push sur `main` qui doit sortir)
 
-Obligatoire avant de publier une release (agents : **Prompt 11** puis **Prompt 13**). La CI `security` rejoue audits + clippy sur le push, mais la **maj des packages** reste manuelle (pas de `cargo update` / `npm update` automatique en CI).
+Recommandé avant un push `main` destiné à être publié (agents : **Prompt 11** / **Prompt 13**). La CI `security` rejoue audits + clippy ; la **maj des packages** reste manuelle (pas de `cargo update` / `npm update` automatique en CI).
 
 ```powershell
 # Depuis la racine du dépôt
@@ -194,11 +194,11 @@ Puis :
 
 1. Relire le diff des lockfiles (`Cargo.lock`, `package-lock.json`) — pas de bump majeur surprise.
 2. Réévaluer [`.cargo/audit.toml`](../.cargo/audit.toml) (ignores RUSTSEC) ; retirer dès qu’un patch existe (voir [BL-016](./product/BACKLOG.md)).
-3. Commit atomique éventuel `chore(deps): …` + push.
-4. Attendre CI verte (y compris job `security`).
-5. **Actions → Release → Run workflow**.
+3. Commit atomique éventuel `chore(deps): …` + push sur `main`.
+4. Attendre CI verte (y compris job `security`) → **Release démarre toute seule**.
+5. Secours : **Actions → Release → Run workflow** si besoin de republier hors CI.
 
-Sanity sans publish (commit courant) : au minimum `cargo check` / `cargo test` / `npm run check` ; audits recommandés si deps touchées.
+Sanity sans viser une release : branche / PR (la Release ne part pas sur les PR).
 
 ### Fichiers de version (doivent rester alignés)
 
@@ -274,7 +274,7 @@ Budget cold `show()` preview **&lt; 50 ms**. Mesure : dans les logs au niveau `i
 - [ ] Pré-publish : maj deps + `cargo audit` / `npm audit` / clippy ; lockfiles commités si besoin
 - [ ] CI verte dont job **`security`**
 - [ ] Secrets updater configurés ; pas de `.gguf` / `.key` dans le commit
-- [ ] Lancer **Actions → Release → Run workflow** (`workflow_dispatch`)
+- [ ] Push `main` → CI verte → Release auto (ou `workflow_dispatch` secours)
 
 ## Svelte AI (MCP)
 

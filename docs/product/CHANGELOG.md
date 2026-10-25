@@ -7,6 +7,7 @@ Les versions suivent [ROADMAP.md](./ROADMAP.md).
 
 ### Added
 - CI job `security` : `cargo clippy`, `cargo audit`, `npm audit --audit-level=high`
+- Release auto après CI verte sur push `main` (`workflow_run`) ; `workflow_dispatch` en secours
 - Docs Pré-publish (COMMANDS) + Prompt 11/13 / RULES : maj deps manuelle avant publish
 - `.cargo/audit.toml` : ignores temporaires advisories `zip` (transitif updater) — BL-016
 
