@@ -26,6 +26,7 @@
   let themeMode = $state<ThemeMode>("dark");
   let accent = $state<AccentPreset>("indigo");
   let density = $state<UiDensity>("comfortable");
+  let launchAtLogin = $state(true);
   let modelPath = $state("");
   let downloadBusy = $state(false);
   let downloadLabel = $state<string | null>(null);
@@ -89,6 +90,18 @@
     }
   }
 
+  async function persistLaunchAtLogin(enabled: boolean) {
+    const previous = launchAtLogin;
+    launchAtLogin = enabled;
+    const result = await commands.setLaunchAtLogin(enabled);
+    if (result.status === "ok") {
+      launchAtLogin = result.data;
+    } else {
+      launchAtLogin = previous;
+      store.errorMessage = formatError(result.error);
+    }
+  }
+
   onMount(() => {
     let unlistenTrigger: (() => void) | undefined;
     let unlistenInference: (() => void) | undefined;
@@ -103,6 +116,7 @@
       if (cfg.status === "ok") {
         applyUiConfig(cfg.data.ui);
         modelPath = cfg.data.ai.model_path;
+        launchAtLogin = cfg.data.launch_at_login ?? true;
       } else {
         applyTheme(
           { theme_mode: "dark", accent: "indigo", density: "comfortable" },
@@ -319,7 +333,9 @@
           {themeMode}
           {accent}
           {density}
+          {launchAtLogin}
           onchange={(next) => void persistTheme(next)}
+          onLaunchAtLogin={(enabled) => void persistLaunchAtLogin(enabled)}
         />
       {/if}
     {/snippet}

@@ -10,14 +10,23 @@
     themeMode: ThemeMode;
     accent: AccentPreset;
     density: UiDensity;
+    launchAtLogin: boolean;
     onchange: (next: {
       themeMode: ThemeMode;
       accent: AccentPreset;
       density: UiDensity;
     }) => void;
+    onLaunchAtLogin: (enabled: boolean) => void;
   }
 
-  let { themeMode, accent, density, onchange }: Props = $props();
+  let {
+    themeMode,
+    accent,
+    density,
+    launchAtLogin,
+    onchange,
+    onLaunchAtLogin,
+  }: Props = $props();
 
   let open = $state(false);
 
@@ -72,7 +81,7 @@
     >
       <p class="mb-1.5 text-[10px] uppercase tracking-wider text-runa-muted">Mode</p>
       <div class="mb-3 flex flex-wrap gap-1">
-        {#each THEME_MODE_OPTIONS as opt}
+        {#each THEME_MODE_OPTIONS as opt (opt.id)}
           <button
             type="button"
             class="rounded-md px-2 py-1 text-xs {themeMode === opt.id
@@ -87,7 +96,7 @@
 
       <p class="mb-1.5 text-[10px] uppercase tracking-wider text-runa-muted">Accent</p>
       <div class="mb-3 flex flex-wrap gap-1">
-        {#each ACCENT_OPTIONS as opt}
+        {#each ACCENT_OPTIONS as opt (opt.id)}
           <button
             type="button"
             class="rounded-md px-2 py-1 text-xs {accent === opt.id
@@ -101,8 +110,8 @@
       </div>
 
       <p class="mb-1.5 text-[10px] uppercase tracking-wider text-runa-muted">Densité</p>
-      <div class="flex flex-wrap gap-1">
-        {#each DENSITY_OPTIONS as opt}
+      <div class="mb-3 flex flex-wrap gap-1">
+        {#each DENSITY_OPTIONS as opt (opt.id)}
           <button
             type="button"
             class="rounded-md px-2 py-1 text-xs {density === opt.id
@@ -114,6 +123,19 @@
           </button>
         {/each}
       </div>
+
+      <p class="mb-1.5 text-[10px] uppercase tracking-wider text-runa-muted">Système</p>
+      <label
+        class="flex cursor-pointer items-center gap-2 rounded-md px-1 py-1 text-xs text-runa-text"
+      >
+        <input
+          type="checkbox"
+          class="accent-runa-accent"
+          checked={launchAtLogin}
+          onchange={(e) => onLaunchAtLogin(e.currentTarget.checked)}
+        />
+        Lancer au démarrage
+      </label>
     </div>
   {/if}
 </div>

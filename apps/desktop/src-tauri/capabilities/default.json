@@ -21,6 +21,9 @@
     "core:window:allow-set-theme",
     "core:app:allow-set-app-theme",
     "updater:default",
-    "dialog:default"
+    "dialog:default",
+    "autostart:allow-enable",
+    "autostart:allow-disable",
+    "autostart:allow-is-enabled"
   ]
 }

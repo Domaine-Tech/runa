@@ -1,12 +1,19 @@
 use serde::{Deserialize, Serialize};
 use specta::Type;
 
+fn default_launch_at_login() -> bool {
+    true
+}
+
 /// Configuration applicative (chargée depuis TOML via `shared-utils`).
 #[derive(Debug, Clone, Serialize, Deserialize, Type)]
 pub struct AppConfig {
     pub trigger: TriggerConfig,
     pub ai: AiConfig,
     pub ui: UiConfig,
+    /// Lancer Runa au démarrage de la session OS (défaut : oui).
+    #[serde(default = "default_launch_at_login")]
+    pub launch_at_login: bool,
 }
 
 fn default_linux_portal_shortcut() -> String {
@@ -117,6 +124,7 @@ impl Default for AppConfig {
                 temperature_translate: 0.2,
             },
             ui: UiConfig::default(),
+            launch_at_login: true,
         }
     }
 }

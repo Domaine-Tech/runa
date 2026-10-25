@@ -73,6 +73,17 @@ async setUiTheme(themeMode: ThemeMode, accent: AccentPreset, density: UiDensity)
     else return { status: "error", error: e  as any };
 }
 },
+/**
+ * Active / désactive le lancement au démarrage de la session OS.
+ */
+async setLaunchAtLogin(enabled: boolean) : Promise<Result<boolean, RunaError>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("set_launch_at_login", { enabled }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
 async wordDiffCmd(before: string, after: string) : Promise<Result<DiffSpan[], RunaError>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("word_diff_cmd", { before, after }) };
@@ -126,7 +137,7 @@ keep_alive_ms?: number | null; max_tokens: number; temperature_correct: number; 
 /**
  * Configuration applicative (chargée depuis TOML via `shared-utils`).
  */
-export type AppConfig = { trigger: TriggerConfig; ai: AiConfig; ui: UiConfig }
+export type AppConfig = { trigger: TriggerConfig; ai: AiConfig; ui: UiConfig; launch_at_login: boolean }
 export type DiffKind = "equal" | "insert" | "delete"
 /**
  * Segment de diff mot-à-mot pour l'affichage UI.

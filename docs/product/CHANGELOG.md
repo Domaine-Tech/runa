@@ -12,6 +12,7 @@ Les versions suivent [ROADMAP.md](./ROADMAP.md).
 - Release auto après CI verte sur push `main` (`workflow_run`) ; `workflow_dispatch` en secours
 - Docs Pré-publish (COMMANDS) + Prompt 11/13 / RULES : maj deps manuelle avant publish
 - `.cargo/audit.toml` : ignores temporaires advisories `zip` (transitif updater) — BL-016
+- Lancement au démarrage OS par défaut (`tauri-plugin-autostart`) ; désactivable via Apparence → **Lancer au démarrage**
 
 ### Changed
 - Versioning release : collision → bump **patch** (`1.0.0` → `1.0.1`) ; MAJOR.MINOR = sprint / dev avant push

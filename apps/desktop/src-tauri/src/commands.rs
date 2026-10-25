@@ -141,6 +141,36 @@ pub async fn get_config(state: State<'_, AppState>) -> Result<AppConfig, RunaErr
     Ok(state.config.read().await.clone())
 }
 
+/// Active / désactive le lancement au démarrage de la session OS.
+#[tauri::command]
+#[specta::specta]
+pub async fn set_launch_at_login(
+    app: AppHandle,
+    state: State<'_, AppState>,
+    enabled: bool,
+) -> Result<bool, RunaError> {
+    {
+        let mut config = state.config.write().await;
+        config.launch_at_login = enabled;
+        save_config(&config)?;
+    }
+    apply_autostart(&app, enabled)?;
+    Ok(enabled)
+}
+
+pub(crate) fn apply_autostart(app: &AppHandle, enabled: bool) -> Result<(), RunaError> {
+    use tauri_plugin_autostart::ManagerExt;
+    let launcher = app.autolaunch();
+    let result = if enabled {
+        launcher.enable()
+    } else {
+        launcher.disable()
+    };
+    result.map_err(|e| RunaError::Internal {
+        message: format!("autostart: {e}"),
+    })
+}
+
 /// Met à jour le thème UI, persiste le TOML et notifie toutes les fenêtres.
 #[tauri::command]
 #[specta::specta]

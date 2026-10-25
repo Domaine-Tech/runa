@@ -21,8 +21,9 @@ use tauri_specta::{collect_commands, Builder as SpectaBuilder};
 use tracing::{error, info, warn};
 
 use crate::commands::{
-    apply_replacement, cancel_inference, copy_text, correct, dismiss, download_model, get_config,
-    has_replace_origin, set_ui_theme, translate, word_diff_cmd,
+    apply_autostart, apply_replacement, cancel_inference, copy_text, correct, dismiss,
+    download_model, get_config, has_replace_origin, set_launch_at_login, set_ui_theme, translate,
+    word_diff_cmd,
 };
 use crate::model_download::ModelDownloadHub;
 use crate::state::AppState;
@@ -51,6 +52,7 @@ pub fn run() {
         cancel_inference,
         get_config,
         set_ui_theme,
+        set_launch_at_login,
         word_diff_cmd,
         has_replace_origin,
         download_model,
@@ -115,6 +117,7 @@ pub fn run() {
     #[cfg(not(feature = "llama"))]
     let ai = create_ai_engine(Arc::clone(&ai_config));
 
+    let launch_at_login = config.launch_at_login;
     let state = AppState::new(
         config,
         Arc::clone(&ai_config),
@@ -131,6 +134,10 @@ pub fn run() {
     let builder = tauri::Builder::default()
         .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(tauri_plugin_dialog::init())
+        .plugin(tauri_plugin_autostart::init(
+            tauri_plugin_autostart::MacosLauncher::LaunchAgent,
+            None::<Vec<&str>>,
+        ))
         .manage(state)
         .invoke_handler(specta.invoke_handler())
         .setup(move |app| {
@@ -143,6 +150,12 @@ pub fn run() {
 
             if let Err(err) = tauri::async_runtime::block_on(trigger_for_setup.start()) {
                 error!(?err, "trigger engine non démarré — tray actif sans Ctrl+C+C");
+            }
+
+            if let Err(err) = apply_autostart(app.handle(), launch_at_login) {
+                warn!(?err, enabled = launch_at_login, "sync autostart OS échouée");
+            } else {
+                info!(enabled = launch_at_login, "autostart OS synchronisé");
             }
 
             setup_tray(app.handle())?;
